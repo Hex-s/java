@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC "http://struts.apache.org/dtds/struts-2.3.dtd" "struts-2.3.dtd" >
+<struts>
+	<!-- 配置struts包 -->
+	<package name="com.niit" extends="struts-default" namespace="/niit">
+		<!-- 配置业务模型 -->
+		<action name="login" class="com.niit.action.LoginAction">
+			<!-- 配置跳转结果 -->
+			<result name="success" type="dispatcher">/success.jsp</result>
+			<result name="error" type="dispatcher">/error.jsp</result>
+		</action>
+	</package>
+</struts>

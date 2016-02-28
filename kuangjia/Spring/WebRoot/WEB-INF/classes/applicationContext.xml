@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd" >
+<!-- beans是spring配置文件的根标签，用来管理当前项目中的每一个bean对象 -->
+<beans>
+	<!-- 定义交由spring管理的bean对象 -->
+	<!-- 定义父类 -->
+	<bean id="father" class="com.niit.bean.Parent" scope="prototype"></bean>
+	<!-- scope="prototype"设置非单例模式 -->
+	<bean id="user" class="com.niit.bean.User" scope="prototype" init-method="init" parent="father">
+		<!-- set注入 -->
+		<property name="userId">
+			<!-- 注入值 -->
+			<value>1002</value>
+		</property>
+		<!-- 注入其他引用的bean -->
+		<property name="birthday">
+			<!-- 引用spring管理的对象 -->
+			<ref bean="birthday"/>
+		</property>
+		<!-- 接口注入 -->
+		<property name="tool">
+			<ref bean="cpu"/>
+		</property>
+		<!-- 构造器注入 -->
+		<constructor-arg index="0">
+			<value>1003</value>
+		</constructor-arg>
+		<constructor-arg index="1">
+			<value>tom</value>
+		</constructor-arg>
+	</bean>
+	<!-- 创建Date bean -->
+	<bean id="birthday" class="java.util.Date"></bean>
+	<bean id="cpu" class="com.niit.bean.Computer">
+		<!-- 注入属性 -->
+		<property name="cpuName">
+			<value>方正电脑</value>
+		</property>
+		<property name="price">
+			<value>4000</value>
+		</property>
+	</bean>
+	<!-- 配置静态代理类 -->
+	<bean id="proxyUser" class="com.niit.proxy.ProxyUser">
+		<!-- 通过构造注入user对象 -->
+		<constructor-arg index="0">
+			<ref bean="user"/>
+		</constructor-arg>
+	</bean>
+	<!-- 配置动态代理类 -->
+	<bean id="proxy" class="com.niit.proxy.DynaProxy"></bean>
+	<!-- 配置book类 -->
+	<bean id="book" class="com.niit.bean.Book">
+		<property name="bookName">
+			<value>Java应用</value>
+		</property>
+		<property name="price">
+			<value>99</value>
+		</property>
+	</bean>
+	<!-- 配置通知 -->
+	<bean id="before" class="com.niit.advice.BeforeAdvice"></bean>
+	<bean id="after" class="com.niit.advice.AfterAdvice"></bean>
+	<bean id="around" class="com.niit.advice.AroundAdvice"></bean>
+	<!-- 配置spring的自动代理工厂 -->
+	<bean class="org.springframework.aop.framework.autoproxy.BeanNameAutoProxyCreator">
+		<!-- 配置代理目标 -->
+		<property name="beanNames">
+			<list>
+				<!-- value值应写入bean id -->
+				<value>user</value>
+				<value>book</value>
+			</list>
+		</property>
+		<!-- 配置通知（拦截器） -->
+		<property name="interceptorNames">
+			<list>
+				<!-- value值应写入Advice bean的id -->
+				<!-- 通知根据先后顺序切入到代理目标中 -->
+				<value>around</value>
+				<value>before</value>
+				<value>after</value>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- 配置公共DAO -->
+	<bean id="commonDao" class="com.niit.dao.util.CommonDao">
+		<property name="driver">
+			<value>oracle.jdbc.driver.OracleDriver</value>
+		</property>
+		<property name="url">
+			<value>jdbc:oracle:thin:@192.168.3.100:1521:orcl</value>
+		</property>
+		<property name="user">
+			<value>system</value>
+		</property>
+		<property name="password">
+			<value>niit</value>
+		</property>
+	</bean>
+	<!-- 配置DAO -->
+	<bean id="wareDao" class="com.niit.dao.impl.WareDao" parent="commonDao"></bean>
+	<!-- 配置模型 -->
+	<bean id="init" class="com.niit.model.ShowAllWare">
+		<!-- 注入dao -->
+		<property name="wareDao">
+			<ref bean="wareDao"/>
+		</property>
+	</bean>
+</beans>

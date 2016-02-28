@@ -1,0 +1,29 @@
+1 Struts2框架的实现过程
+答：Struts2框架是基于mvc模式设计的框架，同时遵循AOP面向切面的编程理念，通过核心控制器（过滤器）拦截所有客户端的请求，由ActionProxy代理生成模型bean实现业务逻辑处理，最后响应回客户端
+
+2 Struts1和Struts2的区别
+答：struts1的核心控制器是servlet，Struts2的核心控制器是filter，struts1的模型是单例模式，struts2的模型是动态生成的，struts1的表单数据需要单独使用frombean封装，struts2的表单数据直接封装在模型中，struts2可以通过拦截器扩展模型功能
+
+3 Hibernate的数据映射方式有哪些
+主要有one to one,one to many,many to one, many to many
+
+4 Hibernate缓存的概念
+答：Hibernate的缓存可以帮助程序更快速得获取已经获取过的数据，在hibernate中session是一级缓存，通过get和load方法会优先在缓存中查找数据，sessionFactory的外置缓存称为二级缓存，需要通过插件开启，二级缓存是进程级缓存被全局共享
+
+5 HQL语句和SQL语句的区别
+答：SQL是标准的结构化查询语句，是所有关系型数据库的标准处理语句，HQL是Hibernate中的查询语句，是Hibernate对SQL进行的封装，以面向对象的方式实现。只能在Hibernate中使用，在运行中HQL语句将会被转换成SQL语句最终提交给数据库进行持久化
+
+6 Spring的作用
+答：spring是一个管理java bean的容器，负责以IOC的方式对bean实现注入式依赖管理，实现对象的解耦和依赖性
+
+7 Spring和Struts的区别
+答：spring是管理组织bean对象关系的框架，struts是实现MVC设计对数据进行分层的框架
+
+8 什么是AOP
+答：AOP是面向切面的编程思想，使用代理机制在不改变源对象的基础上对其进行功能性的扩展和移除
+
+9 什么是IOC
+答：IOC称为依赖注入，通过接口注入，构造器注入以及set注入实现bean的对象管理，降低对象与对象的耦合性
+
+10 Spring的核心是什么
+答：spring的核心是IOC
