@@ -1,0 +1,272 @@
+--创建表空间
+create tablespace bbs datafile 'e:/orcl/bbs.dbf' size 5m autoextend on;
+
+--修改用户默认表空间
+alter user system default tablespace bbs;
+
+--用户表
+create table bbsuser
+(
+  userid int,
+  uname varchar2(32),
+  upwd varchar2(32),
+  usex int, -- 1:男 2:女
+  uemail varchar2(32),
+  ubirthday date,
+  --uclass int, --用户等级
+  ustatement varchar2(255), --备注信息
+  uregdate date,
+  --ustate int, --用户状态 
+  upoint int, --用户积分
+  uhead varchar2(50), --用户自定义头像 
+  address varchar(50),
+  constraints pk_bbsuser_userid primary key(userid)
+);
+create sequence sq_bbsuser_userid
+start with 1
+increment by 1
+
+alter table bbsuser add address varchar2(50);
+
+insert into bbsuser values(0,'null','0000',0,'null',to_date('1980-11-02','yyyy-mm-dd'),'null',sysdate,1,'1.gif');
+
+insert into bbsuser values(sq_bbsuser_userid.nextval,'admin','0000',0,'gyi12345@sina.com.cn',to_date('1980-11-02','yyyy-mm-dd'),'i am admin',sysdate,1,'1.gif');
+insert into bbsuser values(sq_bbsuser_userid.nextval,'tom','0000',0,'w4612345@sina.com.cn',to_date('1980-02-03','yyyy-mm-dd'),'i am tom',sysdate,1,'2.gif');
+insert into bbsuser values(sq_bbsuser_userid.nextval,'jack','0000',0,'ett123453545@sina.com.cn',to_date('1973-07-03','yyyy-mm-dd'),'i am jack',sysdate,1,'3.gif');
+insert into bbsuser values(sq_bbsuser_userid.nextval,'mary','0000',1,'asfaf345@sina.com.cn',to_date('1989-12-03','yyyy-mm-dd'),'i am mary',sysdate,1,'4.gif');
+select * from bbsuser
+--版块表 0:父版块 1-~:父版块编号 
+create table bbsblock
+(
+ bid int,
+ bname varchar2(255),
+ prarentId  int,
+ masterid int,
+ constraints pk_bbsblock_bid primary key(bid),
+ constraints fk_bbsblock_masterid foreign key(masterid) references bbsuser(userid)
+);
+create sequence sq_bbsblock_bid
+start with 1
+increment by 1
+
+insert into bbsblock  values(sq_bbsblock_bid.nextval,'JAVA学习宝典',0,0);
+insert into bbsblock  values(sq_bbsblock_bid.nextval,'JS快速入门',0,0);
+insert into bbsblock  values(sq_bbsblock_bid.nextval,'HTML概要经典',0,0);
+insert into bbsblock  values(sq_bbsblock_bid.nextval,'ORACLE基础知识',0,0);
+insert into bbsblock  values(sq_bbsblock_bid.nextval,'AJAX学习要素',0,0);
+insert into bbsblock  values(sq_bbsblock_bid.nextval,'JQUERY的使用',0,0);
+insert into bbsblock  values(sq_bbsblock_bid.nextval,'TABLE的百变用法',0,0);
+insert into bbsblock  values(sq_bbsblock_bid.nextval,'DIV的布局方法',0,0);
+
+insert into bbsblock  values(sq_bbsblock_bid.nextval,'JAVA学习宝典-第一章',1,1);
+insert into bbsblock  values(sq_bbsblock_bid.nextval,'JS快速入门-chapter1',2,2);
+insert into bbsblock  values(sq_bbsblock_bid.nextval,'HTML概要经典-入门第一步',3,3);
+insert into bbsblock  values(sq_bbsblock_bid.nextval,'ORACLE基础知识-第一章',4,4);
+insert into bbsblock  values(sq_bbsblock_bid.nextval,'AJAX学习要素-chapter1',5,1);
+insert into bbsblock  values(sq_bbsblock_bid.nextval,'JQUERY的使用-第一节',6,2);
+insert into bbsblock  values(sq_bbsblock_bid.nextval,'TABLE的百变用法-第一步',7,3);
+insert into bbsblock  values(sq_bbsblock_bid.nextval,'DIV的布局方法-chapter1',8,4);
+
+insert into bbsblock  values(sq_bbsblock_bid.nextval,'JAVA学习宝典-第二章',1,1);
+insert into bbsblock  values(sq_bbsblock_bid.nextval,'JS快速入门-chapter2',2,2);
+insert into bbsblock  values(sq_bbsblock_bid.nextval,'HTML概要经典-入门第二步',3,3);
+insert into bbsblock  values(sq_bbsblock_bid.nextval,'ORACLE基础知识-第二章',4,4);
+insert into bbsblock  values(sq_bbsblock_bid.nextval,'AJAX学习要素-chapter2',5,1);
+insert into bbsblock  values(sq_bbsblock_bid.nextval,'JQUERY的使用-第二节',6,2);
+insert into bbsblock  values(sq_bbsblock_bid.nextval,'TABLE的百变用法-第二步',7,3);
+insert into bbsblock  values(sq_bbsblock_bid.nextval,'DIV的布局方法-chapter2',8,4);
+
+insert into bbsblock  values(sq_bbsblock_bid.nextval,'JAVA学习宝典-第三章',1,1);
+insert into bbsblock  values(sq_bbsblock_bid.nextval,'JS快速入门-chapter3',2,2);
+insert into bbsblock  values(sq_bbsblock_bid.nextval,'HTML概要经典-入门第三步',3,3);
+insert into bbsblock  values(sq_bbsblock_bid.nextval,'ORACLE基础知识-第三章',4,4);
+insert into bbsblock  values(sq_bbsblock_bid.nextval,'AJAX学习要素-chapter3',5,1);
+insert into bbsblock  values(sq_bbsblock_bid.nextval,'JQUERY的使用-第三节',6,2);
+insert into bbsblock  values(sq_bbsblock_bid.nextval,'TABLE的百变用法-第三步',7,3);
+insert into bbsblock  values(sq_bbsblock_bid.nextval,'DIV的布局方法-chapter3',8,4);
+
+--主贴表
+create table bbstopics
+(
+ tid int,
+ tbid int,
+ tuserid int,
+ ttitle varchar2(500),
+ tcontent clob,
+ tpublishtime date, --发表时间
+ tlastedit date, --最后编辑时间
+ tclickcount int, --点击数
+ tflag int, -- 0:普通帖 1：精华帖
+ constraints pk_bbstopic_tid primary key (tid),
+ constraints fk_bbsblock_tbid foreign key(tbid) references bbsblock(bid),
+ constraints fk_bbsblock_tuserid foreign key(tuserid) references bbsuser(userid)
+);
+create sequence sq_bbstopics_tid
+start with 1
+increment by 1
+
+select * from bbstopics;
+
+insert into bbstopics values(sq_bbstopics_tid.nextval,9,1,'测试主贴1','测试主贴1内容',sysdate-1,sysdate,1,0);
+insert into bbstopics values(sq_bbstopics_tid.nextval,10,2,'测试主贴2','测试主贴2内容',sysdate-2,sysdate-1,34,0);
+insert into bbstopics values(sq_bbstopics_tid.nextval,11,3,'测试主贴3','测试主贴3内容',sysdate-1,sysdate,33,0);
+insert into bbstopics values(sq_bbstopics_tid.nextval,12,1,'测试主贴4','测试主贴4内容',sysdate-4,sysdate-2,67,0);
+insert into bbstopics values(sq_bbstopics_tid.nextval,13,2,'测试主贴5','测试主贴5内容',sysdate-5,sysdate-4,67,0);
+insert into bbstopics values(sq_bbstopics_tid.nextval,14,3,'测试主贴6','测试主贴6内容',sysdate-1,sysdate,98,0);
+insert into bbstopics values(sq_bbstopics_tid.nextval,15,4,'测试主贴7','测试主贴7内容',sysdate-2,sysdate-1,23,0);
+insert into bbstopics values(sq_bbstopics_tid.nextval,16,4,'测试主贴8','测试主贴8内容',sysdate-3,sysdate-2,2626,11);
+insert into bbstopics values(sq_bbstopics_tid.nextval,17,3,'测试主贴9','测试主贴9内容',sysdate-1,sysdate,795,0);
+insert into bbstopics values(sq_bbstopics_tid.nextval,18,1,'测试主贴10','测试主贴10内容',sysdate-2,sysdate-1,125,0);
+insert into bbstopics values(sq_bbstopics_tid.nextval,19,2,'测试主贴11','测试主贴11内容',sysdate-2,sysdate,78,0);
+insert into bbstopics values(sq_bbstopics_tid.nextval,20,2,'测试主贴12','测试主贴12内容',sysdate-1,sysdate,135,0);
+insert into bbstopics values(sq_bbstopics_tid.nextval,21,3,'测试主贴13','测试主贴13内容',sysdate-5,sysdate-4,890,1);
+insert into bbstopics values(sq_bbstopics_tid.nextval,22,4,'测试主贴14','测试主贴14内容',sysdate-4,sysdate-2,606,1);
+insert into bbstopics values(sq_bbstopics_tid.nextval,23,1,'测试主贴15','测试主贴15内容',sysdate-2,sysdate-1,457,0);
+insert into bbstopics values(sq_bbstopics_tid.nextval,24,3,'测试主贴16','测试主贴16内容',sysdate-6,sysdate-3,595,1);
+insert into bbstopics values(sq_bbstopics_tid.nextval,25,4,'测试主贴17','测试主贴17内容',sysdate-3,sysdate-2,2626,11);
+insert into bbstopics values(sq_bbstopics_tid.nextval,26,3,'测试主贴18','测试主贴18内容',sysdate-1,sysdate,795,0);
+insert into bbstopics values(sq_bbstopics_tid.nextval,27,1,'测试主贴19','测试主贴19内容',sysdate-2,sysdate-1,125,0);
+insert into bbstopics values(sq_bbstopics_tid.nextval,28,2,'测试主贴20','测试主贴20内容',sysdate-2,sysdate,78,0);
+insert into bbstopics values(sq_bbstopics_tid.nextval,29,2,'测试主贴21','测试主贴21内容',sysdate-1,sysdate,135,0);
+insert into bbstopics values(sq_bbstopics_tid.nextval,30,3,'测试主贴22','测试主贴22内容',sysdate-5,sysdate-4,890,1);
+insert into bbstopics values(sq_bbstopics_tid.nextval,31,4,'测试主贴23','测试主贴23内容',sysdate-4,sysdate-2,606,1);
+insert into bbstopics values(sq_bbstopics_tid.nextval,32,1,'测试主贴24','测试主贴24内容',sysdate-2,sysdate-1,457,0);
+
+insert into bbstopics values(sq_bbstopics_tid.nextval,9,1,'测试主贴25','测试主贴25内容',sysdate-2,sysdate-2,1,0);
+insert into bbstopics values(sq_bbstopics_tid.nextval,10,2,'测试主贴26','测试主贴26内容',sysdate-3,sysdate-2,34,0);
+insert into bbstopics values(sq_bbstopics_tid.nextval,11,3,'测试主贴27','测试主贴27内容',sysdate-2,sysdate-1,33,0);
+insert into bbstopics values(sq_bbstopics_tid.nextval,12,1,'测试主贴28','测试主贴28内容',sysdate-5,sysdate-2,67,0);
+insert into bbstopics values(sq_bbstopics_tid.nextval,13,2,'测试主贴29','测试主贴29内容',sysdate-6,sysdate-5,67,0);
+insert into bbstopics values(sq_bbstopics_tid.nextval,14,3,'测试主贴20','测试主贴20内容',sysdate-7,sysdate-1,98,0);
+insert into bbstopics values(sq_bbstopics_tid.nextval,15,4,'测试主贴31','测试主贴31内容',sysdate-3,sysdate-2,23,0);
+insert into bbstopics values(sq_bbstopics_tid.nextval,16,4,'测试主贴32','测试主贴32内容',sysdate-4,sysdate-3,2626,11);
+insert into bbstopics values(sq_bbstopics_tid.nextval,17,3,'测试主贴33','测试主贴33内容',sysdate-2,sysdate-1,795,0);
+insert into bbstopics values(sq_bbstopics_tid.nextval,18,1,'测试主贴34','测试主贴34内容',sysdate-3,sysdate-2,125,0);
+insert into bbstopics values(sq_bbstopics_tid.nextval,19,2,'测试主贴35','测试主贴35内容',sysdate-3,sysdate-1,78,0);
+insert into bbstopics values(sq_bbstopics_tid.nextval,20,2,'测试主贴36','测试主贴36内容',sysdate-2,sysdate-1,135,0);
+insert into bbstopics values(sq_bbstopics_tid.nextval,21,3,'测试主贴37','测试主贴37内容',sysdate-6,sysdate-5,890,1);
+insert into bbstopics values(sq_bbstopics_tid.nextval,22,4,'测试主贴38','测试主贴38内容',sysdate-5,sysdate-3,606,1);
+insert into bbstopics values(sq_bbstopics_tid.nextval,23,1,'测试主贴39','测试主贴39内容',sysdate-3,sysdate-2,457,0);
+insert into bbstopics values(sq_bbstopics_tid.nextval,24,3,'测试主贴40','测试主贴40内容',sysdate-7,sysdate-4,595,1);
+insert into bbstopics values(sq_bbstopics_tid.nextval,25,4,'测试主贴41','测试主贴41内容',sysdate-4,sysdate-3,2626,11);
+insert into bbstopics values(sq_bbstopics_tid.nextval,26,3,'测试主贴42','测试主贴42内容',sysdate-2,sysdate-1,795,0);
+insert into bbstopics values(sq_bbstopics_tid.nextval,27,1,'测试主贴43','测试主贴43内容',sysdate-3,sysdate-2,125,0);
+insert into bbstopics values(sq_bbstopics_tid.nextval,28,2,'测试主贴44','测试主贴44内容',sysdate-3,sysdate-1,78,0);
+insert into bbstopics values(sq_bbstopics_tid.nextval,29,2,'测试主贴45','测试主贴45内容',sysdate-2,sysdate-1,135,0);
+insert into bbstopics values(sq_bbstopics_tid.nextval,30,3,'测试主贴46','测试主贴46内容',sysdate-6,sysdate-5,890,1);
+insert into bbstopics values(sq_bbstopics_tid.nextval,31,4,'测试主贴47','测试主贴47内容',sysdate-5,sysdate-3,606,1);
+insert into bbstopics values(sq_bbstopics_tid.nextval,32,1,'测试主贴48','测试主贴48内容',sysdate-3,sysdate-2,457,0);
+
+
+insert into bbstopics values(sq_bbstopics_tid.nextval,9,1,'测试主贴71','测试主贴71内容',sysdate-2,sysdate-2,1,0);
+insert into bbstopics values(sq_bbstopics_tid.nextval,9,1,'测试主贴72','测试主贴72内容',sysdate-2,sysdate-2,1,0);
+insert into bbstopics values(sq_bbstopics_tid.nextval,9,1,'测试主贴73','测试主贴73内容',sysdate-2,sysdate-2,1,0);
+insert into bbstopics values(sq_bbstopics_tid.nextval,9,1,'测试主贴74','测试主贴74内容',sysdate-2,sysdate-2,1,0);
+insert into bbstopics values(sq_bbstopics_tid.nextval,9,1,'测试主贴75','测试主贴75内容',sysdate-2,sysdate-2,1,0);
+insert into bbstopics values(sq_bbstopics_tid.nextval,9,1,'测试主贴76','测试主贴76内容',sysdate-2,sysdate-2,1,0);
+insert into bbstopics values(sq_bbstopics_tid.nextval,9,1,'测试主贴77','测试主贴77内容',sysdate-2,sysdate-2,1,0);
+insert into bbstopics values(sq_bbstopics_tid.nextval,9,1,'测试主贴78','测试主贴78内容',sysdate-2,sysdate-2,1,0);
+insert into bbstopics values(sq_bbstopics_tid.nextval,9,1,'测试主贴79','测试主贴79内容',sysdate-2,sysdate-2,1,0);
+insert into bbstopics values(sq_bbstopics_tid.nextval,9,1,'测试主贴80','测试主贴80内容',sysdate-2,sysdate-2,1,0);
+
+select * from bbstopics
+
+commit
+--回帖表
+create table bbsreplys
+(
+  rid int,
+  rtid int,
+  ruserid int,
+  rcontent clob,
+  rtime date,
+  constraints pk_bbsreplys_rid primary key(rid),
+  constraints fk_bbsreplys_rtid foreign key(rtid) references bbstopics(tid),
+  constraints fk_bbsreplys_ruserid foreign key(ruserid) references bbsuser(userid)
+);
+
+create sequence sq_bbsreplys_rid
+start with 1
+increment by 1
+
+select * from bbsreplys where rtid=61;
+
+insert into bbsreplys values(sq_bbsreplys_rid.nextval,1,1,'测试回帖1',sysdate);
+insert into bbsreplys values(sq_bbsreplys_rid.nextval,2,2,'测试回帖2',sysdate);
+insert into bbsreplys values(sq_bbsreplys_rid.nextval,3,3,'测试回帖3',sysdate);
+insert into bbsreplys values(sq_bbsreplys_rid.nextval,4,4,'测试回帖4',sysdate);
+insert into bbsreplys values(sq_bbsreplys_rid.nextval,5,1,'测试回帖5',sysdate);
+insert into bbsreplys values(sq_bbsreplys_rid.nextval,6,2,'测试回帖6',sysdate);
+insert into bbsreplys values(sq_bbsreplys_rid.nextval,7,3,'测试回帖7',sysdate);
+insert into bbsreplys values(sq_bbsreplys_rid.nextval,8,4,'测试回帖8',sysdate);
+insert into bbsreplys values(sq_bbsreplys_rid.nextval,9,1,'测试回帖9',sysdate);
+insert into bbsreplys values(sq_bbsreplys_rid.nextval,10,2,'测试回帖10',sysdate);
+insert into bbsreplys values(sq_bbsreplys_rid.nextval,11,3,'测试回帖11',sysdate);
+insert into bbsreplys values(sq_bbsreplys_rid.nextval,12,4,'测试回帖12',sysdate);
+insert into bbsreplys values(sq_bbsreplys_rid.nextval,13,1,'测试回帖13',sysdate);
+insert into bbsreplys values(sq_bbsreplys_rid.nextval,14,2,'测试回帖14',sysdate);
+insert into bbsreplys values(sq_bbsreplys_rid.nextval,15,3,'测试回帖15',sysdate);
+insert into bbsreplys values(sq_bbsreplys_rid.nextval,16,4,'测试回帖16',sysdate);
+
+insert into bbsreplys values(sq_bbsreplys_rid.nextval,17,1,'测试回帖17',sysdate);
+insert into bbsreplys values(sq_bbsreplys_rid.nextval,18,2,'测试回帖18',sysdate);
+insert into bbsreplys values(sq_bbsreplys_rid.nextval,19,3,'测试回帖19',sysdate);
+insert into bbsreplys values(sq_bbsreplys_rid.nextval,20,4,'测试回帖20',sysdate);
+insert into bbsreplys values(sq_bbsreplys_rid.nextval,21,1,'测试回帖21',sysdate);
+insert into bbsreplys values(sq_bbsreplys_rid.nextval,22,2,'测试回帖22',sysdate);
+insert into bbsreplys values(sq_bbsreplys_rid.nextval,23,3,'测试回帖23',sysdate);
+insert into bbsreplys values(sq_bbsreplys_rid.nextval,24,4,'测试回帖24',sysdate);
+insert into bbsreplys values(sq_bbsreplys_rid.nextval,25,1,'测试回帖25',sysdate);
+insert into bbsreplys values(sq_bbsreplys_rid.nextval,26,2,'测试回帖26',sysdate);
+insert into bbsreplys values(sq_bbsreplys_rid.nextval,27,3,'测试回帖27',sysdate);
+insert into bbsreplys values(sq_bbsreplys_rid.nextval,28,4,'测试回帖28',sysdate);
+insert into bbsreplys values(sq_bbsreplys_rid.nextval,29,1,'测试回帖29',sysdate);
+insert into bbsreplys values(sq_bbsreplys_rid.nextval,30,2,'测试回帖30',sysdate);
+insert into bbsreplys values(sq_bbsreplys_rid.nextval,31,3,'测试回帖31',sysdate);
+insert into bbsreplys values(sq_bbsreplys_rid.nextval,32,4,'测试回帖32',sysdate);
+
+insert into bbsreplys values(sq_bbsreplys_rid.nextval,49,1,'测试回帖41',sysdate);
+insert into bbsreplys values(sq_bbsreplys_rid.nextval,49,2,'测试回帖42',sysdate);
+insert into bbsreplys values(sq_bbsreplys_rid.nextval,49,3,'测试回帖43',sysdate);
+insert into bbsreplys values(sq_bbsreplys_rid.nextval,49,4,'测试回帖44',sysdate);
+insert into bbsreplys values(sq_bbsreplys_rid.nextval,49,1,'测试回帖45',sysdate);
+insert into bbsreplys values(sq_bbsreplys_rid.nextval,49,2,'测试回帖46',sysdate);
+insert into bbsreplys values(sq_bbsreplys_rid.nextval,49,3,'测试回帖47',sysdate);
+insert into bbsreplys values(sq_bbsreplys_rid.nextval,49,4,'测试回帖48',sysdate);
+insert into bbsreplys values(sq_bbsreplys_rid.nextval,49,1,'测试回帖49',sysdate);
+insert into bbsreplys values(sq_bbsreplys_rid.nextval,49,2,'测试回帖50',sysdate);
+insert into bbsreplys values(sq_bbsreplys_rid.nextval,49,3,'测试回帖51',sysdate);
+insert into bbsreplys values(sq_bbsreplys_rid.nextval,49,4,'测试回帖52',sysdate);
+
+commit;
+select sq_bbsreplys_rid.nextval from dual
+
+drop table bbsuser;
+drop table bbsblock;
+drop table bbstopics;
+drop table bbsreplys;
+
+drop sequence sq_bbsuser_userid;
+drop sequence sq_bbsblock_bid;
+drop sequence sq_bbstopics_tid;
+drop sequence sq_bbsreplys_rid;
+
+select * from bbsuser;
+select * from bbsblock;
+select * from bbstopics;
+select * from bbsreplys;
+
+select count(*) from bbsreplys where rtid=49
+
+update bbsreplys set rtid=61 where rtid=49
+
+commit;
+select * from bbstopics where tid=2
+
+
+
+
+
+
+
+commit
