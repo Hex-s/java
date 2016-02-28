@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd" >
+<beans>
+	<!-- 整合Hibernate配置连接池 -->
+	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<!-- 配置驱动 -->
+		<property name="driverClassName">
+			<value>oracle.jdbc.driver.OracleDriver</value>
+		</property>
+		<!-- 配置URL -->
+		<property name="url">
+			<value>jdbc:oracle:thin:@192.168.3.100:1521:orcl</value>
+		</property>
+		<!-- 配置用户名 -->
+		<property name="username">
+			<value>system</value>
+		</property>
+		<!-- 配置密码 -->
+		<property name="password">
+			<value>niit</value>
+		</property>
+	</bean>
+	<!-- 配置SessionFactory,该对象由spring提供，且替换了Hibernate中原本的sessionFactory对象 -->
+	<bean id="sessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+		<!-- 注入数据源 -->
+		<property name="dataSource">
+			<ref bean="dataSource"/>
+		</property>
+		<!-- 注入Hibernate所需的其他配置信息 -->
+		<property name="hibernateProperties">
+			<props>
+				<!-- 设置方言 -->
+				<prop key="hibernate.dialect">org.hibernate.dialect.Oracle9Dialect</prop>
+				<!-- 设置是否显示SQL语句 -->
+				<prop key="show_sql">true</prop>
+			</props>
+		</property>
+		<!-- 注入Hibernate实体映射文件 -->
+		<property name="mappingResources">
+			<list>
+				<value>com/niit/pojo/User.hbm.xml</value>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- 配置事务处理切面 -->
+	<bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+		<!-- 注入sessionFactory -->
+		<property name="sessionFactory">
+			<ref bean="sessionFactory"/>
+		</property>
+	</bean>
+	<!-- 配置事务通知（拦截器） -->
+	<bean id="transactionInterceptor" class="org.springframework.transaction.interceptor.TransactionInterceptor">
+		<!-- 注入事务切面 -->
+		<property name="transactionManager">
+			<ref bean="transactionManager"/>
+		</property>
+		<!-- 配置事务作用策略 -->
+		<property name="transactionAttributes">
+			<props>
+				<prop key="save*">PROPAGATION_REQUIRED</prop>
+				<prop key="modify*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+			</props>
+		</property>
+	</bean>
+	<!-- 配置自动代理工厂 -->
+	<bean class="org.springframework.aop.framework.autoproxy.BeanNameAutoProxyCreator">
+		<property name="interceptorNames">
+			<list>
+				<!-- 配置作用的拦截器 -->
+				<value>transactionInterceptor</value>
+			</list>
+		</property>
+		<property name="beanNames">
+			<!-- 配置拦截器作用的对象 -->
+			<list>
+				<value>userDao</value>
+			</list>
+		</property>
+	</bean>
+	<!-- 配置公共数据处理对象 -->
+	<bean id="commonDao" class="com.niit.dao.impl.CommonDao">
+		<!-- 将Session注入CommonDao,由于CommonDao继承自HibernateDaoSupport，因此该数据实为注入到该对象 -->
+		<property name="sessionFactory">
+			<ref bean="sessionFactory"/>
+		</property>
+	</bean>
+	<!-- 配置UserDao -->
+	<bean id="userDao" class="com.niit.dao.impl.UserDao" parent="commonDao"></bean>
+	
+	<!-- 配置struts中的action模型 ,此时struts中的action交由spring管理-->
+	<bean id="loginAction" class="com.niit.action.LoginAction">
+		<!-- 注入dao -->
+		<property name="userDao">
+			<ref bean="userDao"/>
+		</property>
+	</bean>
+</beans>

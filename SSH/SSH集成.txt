@@ -1,0 +1,130 @@
+Spring集成Hibernate
+1. 配置dataSource
+<bean name="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName">
+			<value>oracle.jdbc.driver.OracleDriver</value>
+		</property>
+		<property name="url">
+			<value>jdbc:oracle:thin:@localhost:1521:niit</value>
+		</property>
+		<property name="username">
+			<value>system</value>
+		</property>
+		<property name="password">
+			<value>niit</value>
+		</property>
+	</bean>
+
+2.配置sessionFactory
+<bean id="sessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+		<property name="dataSource">
+			<ref bean="dataSource"/>
+		</property>
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">org.hibernate.dialect.Oracle9Dialect</prop>
+				<prop key="show_sql">true</prop>
+			</props>
+		</property>
+		<property name="mappingResources">
+			<list>
+				<value>com/niit/pojo/user.xml</value>
+			</list>
+		</property>
+	</bean>
+
+另一种方式整合hibernate
+<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+		<property name="configLocation"
+			value="classpath:hibernate.cfg.xml">
+		</property>
+	</bean>
+
+
+Spring继承Struts
+1. 在struts-config.xml中配置插件  当ActionServlet启动时通过插件启动Spring
+   <plug-in className="org.springframework.web.struts.ContextLoaderPlugIn">
+        <set-property property="contextConfigLocation" 
+            value="/WEB-INF/applicationContext.xml"/>
+   </plug-in> 
+
+2.struts-config.xml中配置action时type值为org.springframework.web.struts.DelegatingActionProxy
+此时action实例的生成由Spring代理生成
+
+3.在Spring中配置action的实例bean name和struts-config.xml中的action的name相同
+<bean name="/login" class="com.niit.action.LoginAction">
+	<property name="userDao">
+		<ref bean="userDao"/>
+	</property>
+</bean>
+
+<bean id="userDao" class="com.niit.dao.UserDao"></bean>
+
+
+Spring中使用事务AOP
+1. 创建事务管理类（事务切面）
+<bean name="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+		<property name="sessionFactory">
+			<ref bean="sessionFactory"/>
+		</property>
+	</bean>
+
+2. 创建通知
+<bean name="transactionInterceptor" class="org.springframework.transaction.interceptor.TransactionInterceptor">
+		<property name="transactionManager">
+			<ref bean="transactionManager"/>
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+
+事务传播属性：
+PROPAGATION_REQUIRED
+ 如果当前没有事务，就新建一个事务，如果已经存在一个事务中，加入到这个事务中。这是最常见的选择。
+ 
+PROPAGATION_SUPPORTS
+ 支持当前事务，如果当前没有事务，就以非事务方式执行。
+ 
+PROPAGATION_MANDATORY
+ 使用当前的事务，如果当前没有事务，就抛出异常。
+ 
+PROPAGATION_REQUIRES_NEW
+ 新建事务，如果当前存在事务，把当前事务挂起。
+ 
+PROPAGATION_NOT_SUPPORTED
+ 以非事务方式执行操作，如果当前存在事务，就把当前事务挂起。
+ 
+PROPAGATION_NEVER
+ 以非事务方式执行，如果当前存在事务，则抛出异常。
+ 
+PROPAGATION_NESTED
+ 如果当前存在事务，则在嵌套事务内执行。如果当前没有事务，则执行与PROPAGATION_REQUIRED类似的操作
+ 
+
+3. 创建动态代理类生成代理对象对指定的bean对象进行事务处理
+<bean class="org.springframework.aop.framework.autoproxy.BeanNameAutoProxyCreator">
+		<property name="interceptorNames">
+			<list>
+				<value>transactionInterceptor</value>
+			</list>
+		</property>
+		<property name="beanNames">
+			<list>
+				<value>userDao</value>
+			</list>
+		</property>
+	</bean>
+
+
+配置方式二 在启动ActionServlet启动时通过监听器启动Spring
+ <listener>        
+		 <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+  	<context-param>
+     	<param-name>contextConfigLocation</param-name>
+     	<param-value>classpath:applicationContext.xml</param-value>
+	</context-param>

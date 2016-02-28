@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE validators PUBLIC "http://struts.apache.org/dtds/xwork-validator-1.0.3.dtd" "xwork-validator-1.0.3.dtd" >
+<validators>
+	<!-- 配置要校验的字段 -->
+	<field name="userName">
+		<!-- 配置校验器，规则来自com.opensymphony.xwork2.validator.validators包中的default.xml -->
+		<field-validator type="requiredstring">
+			<!-- 配置错误信息 -->
+			<message>用户名不能为空</message>
+		</field-validator>
+	</field>
+</validators>

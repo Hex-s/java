@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+<hibernate-mapping>
+	<class name="com.niit.pojo.Teacher" table="teacher">
+		<!-- 配置主键 -->
+		<id name="teacherId">
+			<column name="teacherId"></column>
+			<!-- 配置主键生成策略 -->
+			<generator class="sequence">
+				<param name="sequence">teacherId</param>
+			</generator>
+		</id>
+		<property name="teacherName">
+			<column name="teacherName"></column>
+		</property>
+		<!-- 配置一对多关系 -->
+		<!-- set表示set集合,bag表示list集合 -->
+		<!-- name属性标示对象中的集合属性名 -->
+		<!-- table表示集合中元素映射的数据表名 -->
+		<!-- fetch表示设置查询语句的方式 join表示表连接  select表示多条语句实现 -->
+		<!-- inverse 控制反转，表示当前集合映射的数据表的操作应该交给该表映射的对象本身来控制，而不交由现在的主对象 -->
+		<!-- cascade 表示级联，用来在多表映射时基于主外键实现同步操作 -->
+		<set name="stuSet" table="student" fetch="select" inverse="true" cascade="delete">
+			<!-- 配置外键 -->
+			<!-- 一对多两表的关联列 -->
+			<key column="teacherId"></key>
+			<!-- 配置集合中元素对应的Java类型 -->
+			<one-to-many class="com.niit.pojo.Student"/>
+		</set>
+		<!-- 多对多映射 -->
+		<bag name="stuList" table="relation">
+			<key column="teacherId"></key>
+			<many-to-many column="stuId" class="com.niit.pojo.Student"></many-to-many>
+		</bag>
+	</class>
+</hibernate-mapping>

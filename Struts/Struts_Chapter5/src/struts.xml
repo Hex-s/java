@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC "http://struts.apache.org/dtds/struts-2.3.dtd" "struts-2.3.dtd" >
+<struts>
+	<package name="struts" extends="struts-default">
+		<action name="init" class="com.niit.action.InitAction">
+			<result name="success">tag.jsp</result>
+		</action>
+		<action name="forward" class="com.niit.action.ForwardAction">
+			<result>success.jsp</result>
+		</action>
+		<action name="login" class="com.niit.action.LoginAction">
+			<result>success.jsp</result>
+		</action>
+	</package>
+</struts>

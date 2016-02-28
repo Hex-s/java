@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC "http://struts.apache.org/dtds/struts-2.3.dtd" "struts-2.3.dtd" >
+<struts>
+	<!-- 配置全局资源文件的启用 -->
+	<constant name="struts.custom.i18n.resources" value="resource"></constant>
+	<package name="struts" extends="struts-default">
+		<action name="login" class="com.niit.action.LoginAction">
+			<result name="success">success.jsp</result>
+		</action>
+	</package>
+</struts>

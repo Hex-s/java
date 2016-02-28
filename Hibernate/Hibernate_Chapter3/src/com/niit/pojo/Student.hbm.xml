@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+<hibernate-mapping>
+	<class name="com.niit.pojo.Student" table="student">
+		<!-- 配置主键 -->
+		<id name="stuId">
+			<column name="stuId"></column>
+			<!-- 配置主键的生成策略 -->
+			<generator class="sequence">
+				<!-- 配置数据库中使用的序列 -->
+				<param name="sequence">stuId</param>
+			</generator>
+		</id>
+		<property name="stuName">
+			<column name="stuName"></column>
+		</property>
+		<!-- 配置多对一 -->
+		<!-- name表示映射的属性对象 -->
+		<!-- column表示映射的外键 -->
+		<!-- lazy表示延迟加载，默认启用，表示只有当调用该数据时才会加载对应的查询语句 -->
+		<many-to-one name="teacher" column="teacherId" lazy="proxy"></many-to-one>
+		<!-- 一对一映射 -->
+		<!-- name表示当前对象映射的属性名称 -->
+		<!-- class表示映射属性的类型 -->
+		<!-- property-ref表示属性的引用，值为当前一对一映射属性对象和当前对象的关联属性 -->
+		<one-to-one name="card" class="com.niit.pojo.Card" property-ref="stu"></one-to-one>
+		<!-- 对多对映射 -->
+		<set name="teacherSet" table="relation">
+			<!-- 配置当前表在关系表中的外键 -->
+			<key column="stuId"></key>
+			<!--column表示集合映射的数据表在关系表中的外键 -->
+			<many-to-many column="teacherId" class="com.niit.pojo.Teacher"></many-to-many>
+		</set>
+	</class>
+</hibernate-mapping>

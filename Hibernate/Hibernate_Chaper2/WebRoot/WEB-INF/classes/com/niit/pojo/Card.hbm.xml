@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+<hibernate-mapping>
+	<class name="com.niit.pojo.Card" table="card">
+		<id name="cardId">
+			<column name="cardId"></column>
+		</id>
+		<property name="cardNo">
+			<column name="cardNo"></column>
+		</property>
+		<!-- 一对一映射中，带有外键的表中映射的对象属性使用多对一映射 -->
+		<many-to-one name="stu" column="stuId"></many-to-one>
+	</class>
+</hibernate-mapping>

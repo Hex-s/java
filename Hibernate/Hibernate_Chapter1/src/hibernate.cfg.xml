@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd" >
+<hibernate-configuration>
+  <session-factory>
+  	<!-- 配置外部的连接池，使用JNDI替换原有的连接池 -->
+  	<!--  <property name="connection.datasource">java:comp/env/jdbc/source</property> -->
+  		<!-- 配置连接数据库的驱动 -->
+  	<property name="connection.driver_class">oracle.jdbc.driver.OracleDriver</property>
+  	<!-- 配置连接数据库的URL -->
+  	<property name="connection.url">jdbc:oracle:thin:@192.168.3.100:1521:orcl</property>
+  	<!-- 配置连接数据库的用户民 -->
+  	<property name="connection.username">system</property>
+  	<!-- 配置连接数据库的密码 -->
+  	<property name="connection.password">niit</property>
+  	<!-- 配置是否显示SQL语句的策略 -->
+  	<property name="show_sql">true</property>
+  	<!-- 配置访问HQL的方言 -->
+  	<property name="dialect">org.hibernate.dialect.Oracle9iDialect</property>
+  	<!-- 配置实体关系映射文件 -->
+  	<mapping resource="com/niit/pojo/Ware.hbm.xml"/>
+  </session-factory>
+</hibernate-configuration>

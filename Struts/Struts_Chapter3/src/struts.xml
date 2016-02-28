@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC "http://struts.apache.org/dtds/struts-2.3.dtd" "struts-2.3.dtd" >
+<struts>
+	<package name="com.niit" extends="struts-default">
+		<!-- 定义拦截器 -->
+		<interceptors>
+			<!-- 配置每一个拦截器对象 -->
+			<interceptor name="myInterceptor" class="com.niit.interceptor.MyInterceptor"></interceptor>
+			<interceptor name="myInterceptorB" class="com.niit.interceptor.MyInterceptorB"></interceptor>
+			<!-- 定义拦截器栈，相当于将多个拦截器作为一个整体，对Action进行拦截 -->
+			<interceptor-stack name="myStack">
+				<!-- 配置拦截器栈的每一个拦截器 -->
+				<interceptor-ref name="myInterceptorB"></interceptor-ref>
+				<interceptor-ref name="myInterceptor"></interceptor-ref>
+			</interceptor-stack>
+		</interceptors>
+		<action name="login" class="com.niit.action.LoginAction">
+			<result name="success">WEB-INF/success.jsp</result>
+			<!-- 数据校验必须配置input -->
+			<result name="input">error.jsp</result>
+			<!-- 自定义拦截器会覆盖系统默认调用的拦截器栈 -->
+			<interceptor-ref name="defaultStack"></interceptor-ref>
+			<!-- 配置当前Action作用的拦截器 -->
+			<!--  <interceptor-ref name="myInterceptor"></interceptor-ref>
+			<interceptor-ref name="myInterceptorB">-->
+				<!-- 注入拦截器中的参数 -->
+				<!--  <param name="str">test string</param>
+			</interceptor-ref>-->
+			<!-- 配置作用的拦截器栈 -->
+			<!-- <interceptor-ref name="myStack"></interceptor-ref> -->
+		</action>
+		<action name="regist" class="com.niit.action.RegistAction">
+			<result name="success">WEB-INF/success.jsp</result>
+			<!-- 配置input result，当验证框架校验错误时进行跳转 -->
+			<result name="input">error.jsp</result>
+		</action>
+	</package>
+</struts>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts-config PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 1.2//EN" "struts-config_1_2.dtd" >
+<struts-config>
+	<!-- 配置表单对象 -->
+	<form-beans>
+		<!-- loginForm对象 -->
+		<form-bean name="loginForm" type="com.niit.form.LoginForm"></form-bean>
+	</form-beans>
+	
+	<!-- 配置action（模型） -->
+	<action-mappings>
+		<action path="/login"
+		        type="com.niit.action.LoginAction"
+		        name="loginForm">
+		     <!-- 配置actionForward -->
+		     <!-- 跳转成功的位置 -->
+		     <forward name="success" path="/WEB-INF/page/success.jsp"></forward>
+		     <!-- 跳转失败的位置 -->
+		     <forward name="failed" path="/WEB-INF/page/failed.jsp"></forward>
+		</action>
+		
+		
+		<action path="/parse"
+				type="com.niit.action.ParseXMLAction">
+			<forward name="success" path="/WEB-INF/page/success.jsp"></forward>
+		</action>
+	</action-mappings>
+</struts-config>

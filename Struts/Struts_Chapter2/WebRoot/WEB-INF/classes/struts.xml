@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC "http://struts.apache.org/dtds/struts-2.3.dtd" "struts-2.3.dtd" >
+<struts>
+	<package name="com.niit" extends="struts-default">
+		<!-- 配置当前包范围的全局result -->
+		<!-- struts框架在执行完Action的execute方法后将先查找局部result,如果不存在再查找全局result -->
+		<global-results>
+			<result name="error">WEB-INF/error.jsp</result>
+			<result name="success">WEB-INF/result.jsp</result>
+		</global-results>
+		<!-- 配置模型 -->
+		<action name="login" class="com.niit.action.LoginAction">
+			<!-- 如果模型中存在不同的跳转，则需要配置多个result -->
+			<!-- result默认的type类型是dispatcher -->
+			<result name="success">WEB-INF/success.jsp</result>
+			<!-- redirect表示页面的重定向，允许跳入外部的页面 -->
+			<!--  <result name="success" type="redirect">http://www.taobao.com</result>	-->
+			<!-- chain表示通过请求链进入下一个内部的action模型，共享request对象 -->
+			<!--  <result name="success" type="chain">regist</result>-->
+			<!-- redirectAction表示重新定向一个新的模型地址，request将会在跳转前被销毁 -->
+			<!--  <result name="success" type="redirectAction">regist</result> -->
+			<result name="error">WEB-INF/newerror.jsp</result>
+		</action>
+		<action name="regist" class="com.niit.action.RegistAction">
+			<!-- 配置异常信息的处理 -->
+			<!-- struts框架通过AOP的方式实现action的异常处理，result属性表示异常发生对应跳转的result的name -->
+			<exception-mapping result="exception" exception="java.lang.Exception"></exception-mapping>
+			<!-- 不同action中配置的result是互不影响的 -->
+			<result name="success">WEB-INF/newsuccess.jsp</result>
+			<result name="exception">WEB-INF/exception.jsp</result>
+		</action>
+		<!-- 配置DMI的action -->
+		<action name="add" class="com.niit.action.CalculatorAction" method="addision"></action>
+		<action name="div" class="com.niit.action.CalculatorAction" method="division"></action>
+		<action name="sub" class="com.niit.action.CalculatorAction" method="substraction"></action>
+		<!-- 配置BuyAction -->
+		<action name="buy" class="com.niit.action.BuyAction"></action>
+	</package>
+</struts>

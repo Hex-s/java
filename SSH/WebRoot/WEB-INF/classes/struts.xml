@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC "http://struts.apache.org/dtds/struts-2.3.dtd" "struts-2.3.dtd" >
+<struts>
+	<!-- 配置生成Action的ActionObjectFactory对象 -->
+	<constant name="struts.objectFactory" value="spring" />
+	<package name="com.niit" extends="struts-default">
+		<!-- 整合Spring框架后，Action的class属性应为Spring配置文件中的bean的id -->
+		<action name="login" class="loginAction">
+			<result name="success">success.jsp</result>
+			<result name="error">error.jsp</result>
+		</action>
+	</package>
+</struts>
